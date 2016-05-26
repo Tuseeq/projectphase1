@@ -4,7 +4,7 @@ from thread import *
 
 s = socket.socket()         
 HOST = ''
-PORT = 12301   
+PORT = 5883  
 s.connect((HOST,PORT))
 p= s.recv(1024)
 print p

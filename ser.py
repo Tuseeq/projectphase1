@@ -2,11 +2,11 @@ import socket
 import sys
 from thread import *
 conn=[0,0]
-
+i=0
 
 
 HOST=''
-PORT=12301
+PORT=5883
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 print "socket created:"
@@ -30,28 +30,28 @@ def func(conn1):
 		data=conn1.recv(1024)
 		reply=data 
 		if not data:
+			if conn1==conn[1]:
+				conn[1]=0
+			elif conn1==conn[0]:
+				conn[0]=0
 			break
-		conn[1].sendall(reply)
+		if conn1==conn[1] and conn[0]<>0:
+			conn[0].sendall(reply)
+		elif conn1==conn[0] and conn[1]<>0 :
+			conn[1].sendall(reply)
 	conn1.close()
-def func2(conn2):
-	conn2.send('****Welcome to the server****\n(enter q or Q to leave)\n')
-	while True:
-		data=conn2.recv(1024)
-		reply=data
-		if not data:
-			break
-		conn[0].sendall(reply)
-	conn2.close()
 
 
 
-while 2:
-	conn[0], addr =s.accept()
-	print 'connected with:' + addr[0] + ':' +str(addr[1])
-	start_new_thread(func,(conn[0],))
-	conn[1], addr =s.accept()
-	print 'connected with:' + addr[0] + ':' +str(addr[1])
-	start_new_thread(func2,(conn[1],))
-	
+
+while 1:
+	#if conn[i]==0:
+		conn[i], addr =s.accept()
+		print 'connected with:' + addr[0]+ ':' +str(addr[1])
+		start_new_thread(func,(conn[i],))
+		if i==0:
+			i=i+1
+		elif i==1:
+			i=i-1	
 s.close()	
 	
